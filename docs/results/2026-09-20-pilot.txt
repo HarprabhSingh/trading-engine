@@ -1,0 +1,5 @@
+mode=handoff samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840094041 negative_samples=0 retries=0 elapsed_s=0.080408 messages_per_s=2611693
+exact_p50_ns=207 exact_p99_ns=299 exact_p999_ns=5904 max_ns=364345
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.

@@ -13,7 +13,7 @@
 //   2. head_/tail_ on separate cache lines (alignas(64)) — prevents false
 //      sharing where writer and reader invalidate each other's cache lines.
 //   3. Acquire/release memory ordering — no seq_cst needed for SPSC, which
-//      avoids the MFENCE instruction on x86.
+//      expresses the publication/reuse edges; instruction selection is compiler-specific.
 //   4. Size must be power-of-2 so (idx & mask) replaces modulo (no division).
 //   5. No dynamic allocation — the ring is embedded by value.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -22,7 +22,9 @@ namespace fh {
 
 template<typename T, size_t N>
 class SPSCRing {
-    static_assert((N & (N-1)) == 0, "N must be a power of 2");
+    static_assert(N >= 2 && (N & (N-1)) == 0, "N must be a power of 2 >= 2");
+    static_assert(std::atomic<size_t>::is_always_lock_free,
+                  "This ring requires lock-free index atomics");
     static constexpr size_t MASK = N - 1;
 
     // Producer writes head_, reads tail_ (stale read is fine — worst case we

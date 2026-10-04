@@ -1,0 +1,60 @@
+run=1
+mode=handoff samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840108759 negative_samples=0 retries=0 elapsed_s=0.056378 messages_per_s=3724864
+exact_p50_ns=129 exact_p99_ns=253 exact_p999_ns=13498 max_ns=435464
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.
+run=2
+mode=handoff samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840069193 negative_samples=0 retries=0 elapsed_s=0.049669 messages_per_s=4228006
+exact_p50_ns=121 exact_p99_ns=205 exact_p999_ns=1286 max_ns=109473
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.
+run=3
+mode=handoff samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840077930 negative_samples=0 retries=0 elapsed_s=0.048724 messages_per_s=4310018
+exact_p50_ns=62 exact_p99_ns=233 exact_p999_ns=5692 max_ns=99877
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.
+run=4
+mode=handoff samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840780663 negative_samples=0 retries=0 elapsed_s=0.027656 messages_per_s=7593316
+exact_p50_ns=40 exact_p99_ns=95 exact_p999_ns=567 max_ns=55266
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.
+run=5
+mode=handoff samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840092400 negative_samples=0 retries=0 elapsed_s=0.041850 messages_per_s=5017909
+exact_p50_ns=53 exact_p99_ns=234 exact_p999_ns=657 max_ns=282040
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.
+run=1
+mode=saturated samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840081855 negative_samples=0 retries=24575 elapsed_s=0.013777 messages_per_s=15242575
+exact_p50_ns=194080 exact_p99_ns=486830 exact_p999_ns=523345 max_ns=524603
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.
+run=2
+mode=saturated samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840080891 negative_samples=0 retries=0 elapsed_s=0.006854 messages_per_s=30637702
+exact_p50_ns=8463 exact_p99_ns=15389 exact_p999_ns=27765 max_ns=27931
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.
+run=3
+mode=saturated samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840070253 negative_samples=0 retries=33358 elapsed_s=0.016068 messages_per_s=13069211
+exact_p50_ns=200594 exact_p99_ns=811651 exact_p999_ns=867573 max_ns=869027
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.
+run=4
+mode=saturated samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840084438 negative_samples=0 retries=16592 elapsed_s=0.012440 messages_per_s=16881436
+exact_p50_ns=190225 exact_p99_ns=441181 exact_p999_ns=469877 max_ns=483506
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.
+run=5
+mode=saturated samples=200000 warmup=10000 affinity=unpinned message_bytes=128 ring_slots=4096 usable=4095
+ns_per_tick=0.840081614 negative_samples=0 retries=68731 elapsed_s=0.024200 messages_per_s=8677686
+exact_p50_ns=491305 exact_p99_ns=791751 exact_p999_ns=837324 max_ns=846452
+No tail samples discarded. Quantiles include timestamp overhead. Throughput includes warmup and join.
+Handoff is a closed-loop experiment; saturated includes queueing. Neither measures network latency.

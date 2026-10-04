@@ -113,7 +113,7 @@ void test_price_precision() {
     // Verify scaled integer price math
     double raw = 182.509999;  // float imprecision
     fh::Price p = fh::to_price(raw);
-    // with 6 decimal places, 182.509999 → 182509999 (rounds to 182510000)
+    // With six decimal places, 182.509999 converts to approximately 182509999.
     ASSERT(p > 0, "price is positive");
 
     // Spread calculation must be exact in integer domain

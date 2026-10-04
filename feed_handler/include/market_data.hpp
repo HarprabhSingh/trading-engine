@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstring>
 #include <string_view>
+#include <algorithm>
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal normalized message schema
@@ -9,16 +10,16 @@
 // Design decisions (interview talking points):
 //   1. Fixed-size POD structs — no heap allocation, memcpy-safe, cache-friendly
 //   2. Timestamps in nanoseconds since epoch — matches exchange precision
-//   3. Prices as int64 scaled integers (price * 10000) — eliminates float rounding
+//   3. Prices as int64 scaled integers (price * 1,000,000) — eliminates float rounding
 //   4. Symbol as fixed char[8] — avoids std::string heap alloc in hot path
 //   5. Separate recv_ts (when we got it) vs exchange_ts (when exchange sent it)
-//      — the delta is your feed latency measurement
+//      — subtraction alone does not establish network latency or clock sync
 // ─────────────────────────────────────────────────────────────────────────────
 
 namespace fh {
 
-// Price is stored as integer: $123.45 → 1234500  (6 decimal places)
-// Avoids all floating-point comparison and rounding issues
+// Price is stored as integer: $123.45 → 123450000  (6 decimal places)
+// Integer arithmetic is exact after conversion; input double rounding remains.
 using Price  = int64_t;
 using Qty    = int64_t;
 using Nanos  = int64_t;  // nanoseconds since Unix epoch

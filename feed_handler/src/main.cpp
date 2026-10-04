@@ -20,7 +20,7 @@
 // Thread layout:
 //   Thread 1 (main)   — Boost.Asio io_context (I/O, WS, decode, ring push)
 //   Thread 2          — Order book consumer (ring pop, BBO update, latency log)
-//   Thread 3          — Stats printer (every 5s, reads atomics — no locks)
+//   Thread 3          — Stats printer (unsafe shared reads; see audit)
 //
 // This is the simplest setup that demonstrates the SPSC pattern.
 // Phase 2 will pin these threads to isolated cores.

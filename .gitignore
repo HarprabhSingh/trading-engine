@@ -1,0 +1,10 @@
+build/
+build-*/
+.tools/
+*.exe
+*.obj
+*.pdb
+*.ilk
+.env
+.env.*
+!.env.example

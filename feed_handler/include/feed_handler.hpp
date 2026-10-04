@@ -20,6 +20,7 @@
 #include <chrono>
 
 // ─────────────────────────────────────────────────────────────────────────────
+// EXPERIMENTAL: see docs/CLAIM_AUDIT.md before using this live adapter.
 // FeedHandler — Polygon.io WebSocket client
 //
 // Architecture:
@@ -32,12 +33,11 @@
 //   On disconnect: exponential backoff reconnect (cap 30s)
 //
 // Interview talking points:
-//   - Why not use a thread per symbol? N threads × M symbols = thundering herd
-//     on reconnect.  Single I/O thread with async ops handles thousands of
-//     symbols with one CPU core.
+//   - A single I/O owner simplifies queue ownership. Symbol scalability has
+//     not been benchmarked.
 //   - Why Boost.Beast over libwebsockets? Beast is header-only, integrates
 //     directly with Asio's executor model, and gives us async_read on Beast
-//     flat_buffer with zero-copy reads.
+//     flat_buffer. This is not an end-to-end zero-copy transport claim.
 // ─────────────────────────────────────────────────────────────────────────────
 
 namespace fh {
@@ -48,7 +48,7 @@ namespace net   = boost::asio;
 namespace ssl   = boost::asio::ssl;
 using tcp       = net::ip::tcp;
 
-// Ring size: 4096 messages = 256 KB (4096 × 64 bytes).  Power-of-2 required.
+// 4096 slots; MarketMsg is 128 bytes on the measured ABI (512 KiB storage).
 constexpr size_t RING_SIZE = 4096;
 using MsgRing = SPSCRing<MarketMsg, RING_SIZE>;
 

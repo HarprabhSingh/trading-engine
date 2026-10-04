@@ -18,14 +18,10 @@
 // Example quote message:
 //   [{"ev":"Q","sym":"AAPL","bp":182.50,"bs":3,"ap":182.51,"as":5,"t":1700000000000}]
 //
-// Design: hand-rolled JSON field extraction (no full parse tree).
-// Interview talking point: simdjson or RapidJSON add ~50-200ns per message.
-// For MVP a hand-rolled scanner is fine and demonstrates you understand the cost.
-//
-// In production you would:
-//   - Use simdjson's On-Demand API (parses only fields you touch, ~100ns/msg)
-//   - Or better: switch to Polygon's binary WebSocket format (flatbuffers)
-// ─────────────────────────────────────────────────────────────────────────────
+// Design: a narrow field scanner over borrowed frame bytes, without an owned
+// parse tree. This is not a complete JSON parser. Parser alternatives must be
+// evaluated for correctness and measured on the same input before comparison.
+// See docs/CLAIM_AUDIT.md for known limitations.
 
 namespace fh {
 

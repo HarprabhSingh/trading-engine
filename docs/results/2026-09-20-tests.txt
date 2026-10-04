@@ -1,0 +1,54 @@
+PASS: histogram boundaries, nearest rank, overflow, wraparound, full/empty, 1000000 ordered concurrent transfers
+Quote=64 Trade=64 MarketMsg=128 Ring=524416
+═══ Feed Handler Unit Tests ═══
+
+test_quote_decode
+  PASS: msg type is Quote
+  PASS: symbol is AAPL
+  PASS: bid price correct
+  PASS: ask price correct
+  PASS: bid size correct
+  PASS: ask size correct
+  PASS: exchange timestamp ns
+  PASS: recv timestamp set
+  PASS: exactly one message decoded
+  PASS: stats: quotes_decoded == 1
+  PASS: stats: no parse errors
+
+test_trade_decode
+  PASS: msg type is Trade
+  PASS: symbol is MSFT
+  PASS: price correct
+  PASS: size correct
+  PASS: trade_id correct
+  PASS: exactly one trade decoded
+
+test_multi_message_frame
+  PASS: three messages decoded from one frame
+  PASS: two quotes
+  PASS: one trade
+
+test_malformed_frame
+  PASS: malformed message not decoded
+  PASS: parse error counted
+
+test_auth_status_frame
+  PASS: status message not decoded as market msg
+
+test_price_precision
+  PASS: price is positive
+  PASS: spread is exactly 0.01 in integer domain
+
+test_spsc_ring (single-threaded correctness)
+  PASS: ring starts empty
+  PASS: ring has 7 items
+  PASS: push fails when full
+  PASS: pop returns first item
+  PASS: push succeeds after pop
+
+test_latency_histogram
+  PASS: count is 200
+  PASS: p50 is ~200ns
+  PASS: p99 is ~5µs
+
+═══ Results: 33 passed, 0 failed ═══
