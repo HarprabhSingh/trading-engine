@@ -7,7 +7,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Single-Producer Single-Consumer lock-free ring buffer
 //
-// Interview talking points:
+// Design notes:
 //   1. SPSC constraint is intentional — MPMC rings need CAS loops which add
 //      latency.  Feed handler = 1 writer, order book = 1 reader, always.
 //   2. head_/tail_ on separate cache lines (alignas(64)) — prevents false

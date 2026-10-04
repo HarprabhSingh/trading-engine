@@ -20,7 +20,7 @@
 #include <chrono>
 
 // ─────────────────────────────────────────────────────────────────────────────
-// EXPERIMENTAL: see docs/CLAIM_AUDIT.md before using this live adapter.
+// EXPERIMENTAL: see docs/IMPLEMENTATION_STATUS.md before using this live adapter.
 // FeedHandler — Polygon.io WebSocket client
 //
 // Architecture:
@@ -32,7 +32,7 @@
 //   connect → SSL handshake → WS handshake → authenticate → subscribe → read loop
 //   On disconnect: exponential backoff reconnect (cap 30s)
 //
-// Interview talking points:
+// Design notes:
 //   - A single I/O owner simplifies queue ownership. Symbol scalability has
 //     not been benchmarked.
 //   - Why Boost.Beast over libwebsockets? Beast is header-only, integrates

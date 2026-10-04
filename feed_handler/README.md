@@ -3,8 +3,8 @@
 See the [repository README](../README.md) for scope, build instructions, and implementation status.
 
 - [Benchmark methodology](../docs/BENCHMARKS.md)
-- [Implementation and resume audit](../docs/CLAIM_AUDIT.md)
-- [Interview preparation](../docs/INTERVIEW_GUIDE.md)
+- [Implementation status](../docs/IMPLEMENTATION_STATUS.md)
+- [Engineering notes](../docs/ENGINEERING_NOTES.md)
 
 `include/` contains the schema, queue, decoder, timer, and experimental live adapter. `tests/` contains offline correctness checks and two benchmark workloads. `src/main.cpp` contains the experimental BBO consumer and live entry point.
 

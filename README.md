@@ -105,4 +105,4 @@ Queue transfer uses fixed storage, but I have not established zero allocations a
 
 Next steps are to harden the existing pipeline, add deterministic feed replay and allocation instrumentation, and define loss/recovery behavior before extending the book and adding paper execution.
 
-For a deeper walkthrough of ownership, memory ordering, parsing, measurement, and alternatives, see the [project and interview guide](docs/INTERVIEW_GUIDE.md). The [implementation audit](docs/CLAIM_AUDIT.md) tracks the remaining issues in detail.
+For a deeper walkthrough of ownership, memory ordering, parsing, measurement, and alternatives, see the [engineering notes](docs/ENGINEERING_NOTES.md). The [implementation audit](docs/IMPLEMENTATION_STATUS.md) tracks the remaining issues in detail.

@@ -21,7 +21,7 @@
 // Design: a narrow field scanner over borrowed frame bytes, without an owned
 // parse tree. This is not a complete JSON parser. Parser alternatives must be
 // evaluated for correctness and measured on the same input before comparison.
-// See docs/CLAIM_AUDIT.md for known limitations.
+// See docs/IMPLEMENTATION_STATUS.md for known limitations.
 
 namespace fh {
 

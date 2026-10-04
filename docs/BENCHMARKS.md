@@ -31,7 +31,7 @@ Histogram estimates and exact sample quantiles are different. The application hi
 
 ## Original benchmark defects
 
-The original code streamed one million events, discarded deltas of at least 1 ms, and printed expected 100/300 ns figures. Those expectations were not run output. Its histogram could write outside its array starting at 12.4 us, and a one-sample percentile could report zero. Calibration's signed accumulator overflowed. Consequently, the original version is not suitable evidence for the resume claim.
+The original code streamed one million events, discarded deltas of at least 1 ms, and printed expected 100/300 ns figures. Those expectations were not run output. Its histogram could write outside its array starting at 12.4 us, and a one-sample percentile could report zero. Calibration's signed accumulator overflowed. Consequently, the original version is not suitable evidence for a measured latency result.
 
 The corrected core has regression coverage for the histogram boundary and nearest-rank cases, full/empty and wraparound behavior, and one million ordered concurrent integer transfers. This is functional testing, not a formal proof, full parser validation, or a complete allocation audit.
 
@@ -50,7 +50,7 @@ The old MinGW GCC 9.2 installation lacks the required floating `from_chars` and 
 
 ## Measured results
 
-The [initial pilot](results/2026-09-20-pilot.txt) is included alongside [all five repeated runs per mode](results/2026-09-20-windows.txt). Nothing was selected because it matched the resume. [Source hashes](results/2026-09-20-source-hashes.txt) identify the working-tree inputs (comment cleanup after compilation did not change executable behavior).
+The [initial pilot](results/2026-09-20-pilot.txt) is included alongside [all five repeated runs per mode](results/2026-09-20-windows.txt). All recorded runs are included, regardless of latency. [Source hashes](results/2026-09-20-source-hashes.txt) identify the working-tree inputs (comment cleanup after compilation did not change executable behavior).
 
 | Workload / run | p50 (ns) | p99 (ns) | p99.9 (ns) | max (ns) |
 | --- | ---: | ---: | ---: | ---: |
@@ -70,7 +70,7 @@ All recorded runs had zero negative samples. Across the six handoff runs, p50 ra
 
 Saturated p50 ranged from **8.46 to 491.31 us**, with p99 **15.39 to 811.65 us**. This demonstrates the importance of workload and queue residence. Attribution to particular cores, SMT, or scheduler events would require profiling; the current data alone does not establish those causes.
 
-For an interview: “On an i5-1035G1 Windows desktop, six unpinned closed-loop handoff runs measured p50 40–207 ns and p99 95–299 ns for 128-byte messages, with 200,000 measured samples per run. Sustained queue load produced much larger latency, and I documented both.”
+On this i5-1035G1 Windows desktop, six unpinned closed-loop handoff runs measured p50 40–207 ns and p99 95–299 ns for 128-byte messages, with 200,000 measured samples per run. Sustained queue load produced much larger latency; both workloads are documented above.
 
 ## Validation completed locally
 

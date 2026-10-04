@@ -1,10 +1,8 @@
-# Interview preparation
+# Engineering notes
 
-## Your opening explanation
+## Project scope
 
-“I built the market-data ingestion foundation of a trading engine in C++20. It normalizes quote and trade events into fixed-size values and passes them through a bounded SPSC queue to a separate consumer. The current consumer tracks best bid and offer. My focus is ownership, memory ordering, bounded storage, and measurement. I distinguish the tested offline queue/benchmark from the experimental network adapter. It does not yet execute orders or maintain a full depth book.”
-
-Use your own words. Be able to draw the data path and explain every arrow before discussing nanoseconds.
+This project implements the market-data ingestion foundation of a trading engine in C++20. It normalizes quote and trade events into fixed-size values and passes them through a bounded SPSC queue to a separate consumer. The current consumer tracks best bid and offer. The design focuses on ownership, memory ordering, bounded storage, and measurement. The tested offline queue and benchmark are separate from the experimental network adapter; order execution and a full depth book are future work.
 
 ## Walk one event through the code
 
@@ -17,7 +15,7 @@ Use your own words. Be able to draw the data path and explain every arrow before
 
 The decoder timestamp is not packet arrival. The current live timestamp endpoint is before the BBO assignment. Never label that interval network latency or exchange-to-book latency.
 
-## SPSC: explain the proof, not just the vocabulary
+## SPSC ownership and ordering
 
 **Why exactly one producer and one consumer?** The producer alone advances head; the consumer alone advances tail. Each thread can read its own index relaxed because no competing writer modifies it. A second producer could claim the same slot; stronger ordering alone would not fix that.
 
@@ -43,7 +41,7 @@ The decoder timestamp is not packet arrival. The current live timestamp endpoint
 
 **Do smart pointers remove allocations?** No. `make_shared` allocates ownership/object storage; shared pointer copies update ownership counts. Here `shared_from_this` keeps the asynchronous handler alive. Payloads are passed by value instead of smart pointer. There is no custom allocator in the project.
 
-**What would a custom allocator add?** A pool could bound allocation for variable-size events, sessions, or callbacks. It needs alignment, exhaustion behavior, thread ownership, and lifetime rules. It is unnecessary for an already inline fixed-capacity ring. Adding one just to match a resume sentence would not establish a benefit.
+**What would a custom allocator add?** A pool could bound allocation for variable-size events, sessions, or callbacks. It needs alignment, exhaustion behavior, thread ownership, and lifetime rules. It is unnecessary for an already inline fixed-capacity ring. A pool should be introduced only for a demonstrated allocation requirement and evaluated against a baseline.
 
 **Is RAII sufficient for async correctness?** Resource destruction is automatic, but destruction must occur at the right time. A local string is destroyed too early when an asynchronous write still borrows its bytes. Keeping the handler alive does not keep every external buffer alive. Beast requires the underlying buffers to survive completion and serializes writes through a one-write-at-a-time contract: [official documentation](https://www.boost.org/doc/libs/latest/libs/beast/doc/html/beast/ref/boost__beast__websocket__stream/async_write.html).
 
@@ -59,9 +57,9 @@ The decoder timestamp is not packet arrival. The current live timestamp endpoint
 
 **BBO versus an order book?** BBO stores the best visible bid and ask. A depth book stores multiple levels or individual orders and processes adds, modifications, cancellations, and executions. A matching engine also enforces matching priority and produces fills. This project currently provides none of those latter guarantees.
 
-## Benchmark defense
+## Interpreting benchmarks
 
-Start by stating the workload, hardware, compiler flags, payload size, sample count, and percentile definition. Then give the measured numbers from [BENCHMARKS.md](BENCHMARKS.md).
+Results depend on the workload, hardware, compiler flags, payload size, sample count, and percentile definition. Recorded measurements are in [BENCHMARKS.md](BENCHMARKS.md).
 
 **What does push-to-pop mean here?** Timestamp before constructing/pushing the envelope to timestamp after popping it. It includes copying, publication, coherence, scheduling, and queue residence, plus measurement overhead. It is not the cost of just one atomic or one function call.
 
@@ -77,13 +75,13 @@ Start by stating the workload, hardware, compiler flags, payload size, sample co
 
 **What about coordinated omission?** Closed-loop handoff stops issuing while waiting for acknowledgement. It does not represent an independent arrival stream during stalls. Saturation is also not a market workload. A future open-loop replay should preserve scheduled arrival times and include overload, loss, and end-to-end completion.
 
-**Did you achieve 100/300 ns?** “Those initial numbers were unverified. I audited the benchmark, corrected histogram/timing issues, and replaced them with recorded results for defined workloads.” State the new results; do not retroactively describe them as the original measurement.
+**What happened to the initial 100/300 ns figures?** They were unverified expectations. Histogram and timing corrections preceded the recorded measurements for defined workloads. The current results do not establish those earlier figures as historical measurements.
 
 **Why no speedup percentage?** There is no controlled baseline. Compare against a bounded mutex queue using the same payload, arrival process, core placement, and measurement boundaries before claiming improvement. Include CPU utilization and loss, not just latency.
 
-## Difficult questions to rehearse
+## Design review questions
 
-| Question | What a strong answer must contain |
+| Question | Engineering considerations |
 | --- | --- |
 | Why not use a mutex? | Simpler synchronization is valid; topology motivated SPSC, measured comparison still pending |
 | Why C++20? | Build standard versus features actually used; value layout, atomics, lifetime control; no invented C++20 feature usage |
@@ -91,20 +89,17 @@ Start by stating the workload, hardware, compiler flags, payload size, sample co
 | Why not atomics on every BBO field? | Per-field race freedom does not provide a coherent multi-field snapshot |
 | Could a seqlock fix telemetry? | Ordinary concurrent C++ reads/writes remain data races without a valid implementation; prefer an owned snapshot queue |
 | What did testing prove? | Ring FIFO and boundary behavior plus histogram cases; not a mathematical proof or full network validation |
-| What is your worst bug? | Histogram out-of-bounds and discarded tails undermined measurement; regression tests and explicit boundaries address it |
+| Which defects affected measurement? | Histogram out-of-bounds and discarded tails undermined measurement; regression tests and explicit boundaries address it |
 | Is this production ready? | No; describe specific missing acceptance criteria and implementation priorities |
 
-## Two-day preparation plan
+## Exploring the implementation
 
-**Day one, first half:** Read the schema and ring line by line. Draw ownership for empty, partially full, full, and wraparound states. Reproduce tests. Explain both acquire/release edges without notes.
+1. Read the schema and ring line by line. Trace empty, partially full, full, and wraparound states, then identify both acquire/release edges.
+2. Run both benchmark modes repeatedly. Compare queueing behavior and trace each reported metric to its measurement boundaries.
+3. Follow failure scenarios: callbacks outliving locals, reconnect during outstanding operations, consumer lag, dropped quotes, malformed messages, and shutdown. The [implementation status](IMPLEMENTATION_STATUS.md) records the known defects and acceptance criteria.
+4. Reproduce a benchmark run and identify which observations are supported by the output and which would require profiling or a comparison baseline.
 
-**Day one, second half:** Run both benchmark modes repeatedly. Explain why they differ. Read the audit and rehearse the opening explanation plus the allocator and BBO corrections. Know where every claimed number comes from.
-
-**Day two, first half:** Practice resource lifetime and failure scenarios: callbacks outliving locals, reconnect during outstanding operations, consumer lag, dropped quotes, malformed messages, and shutdown. Outline fixes before coding them.
-
-**Day two, second half:** Give a five-minute source walkthrough and a ten-minute adversarial mock interview. Reproduce one benchmark run, interpret it, then discuss the next engineering step. Avoid adding new features immediately before the interview at the expense of understanding the existing code.
-
-## Five-minute demonstration
+## Offline demonstration
 
 1. Open the README and explain current scope.
 2. Run the offline test executables.
@@ -112,7 +107,7 @@ Start by stating the workload, hardware, compiler flags, payload size, sample co
 4. Run handoff and saturated modes; explain measurement boundaries and result variation.
 5. Open the audit and identify the highest-priority live-adapter fix.
 
-A successful defense shows precise reasoning and ownership of limitations. Memorized speed claims are much easier to challenge than reproducible experiments.
+The demonstration covers the offline core. Live-adapter behavior requires separate integration tests.
 
 ## Source walkthrough: how the pieces work together
 

@@ -7,7 +7,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal normalized message schema
 //
-// Design decisions (interview talking points):
+// Design decisions:
 //   1. Fixed-size POD structs — no heap allocation, memcpy-safe, cache-friendly
 //   2. Timestamps in nanoseconds since epoch — matches exchange precision
 //   3. Prices as int64 scaled integers (price * 1,000,000) — eliminates float rounding

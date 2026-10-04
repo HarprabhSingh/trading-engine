@@ -8,7 +8,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Unit tests for PolygonDecoder
 // Run these without needing any API key or network connection.
-// These are the tests you demo in an interview to show production discipline.
+// Offline regression checks for decoder behavior and core components.
 // ─────────────────────────────────────────────────────────────────────────────
 
 static int passed = 0, failed = 0;
